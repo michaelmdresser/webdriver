@@ -57,7 +57,7 @@ proc checkResponse(resp: string): JsonNode =
 proc newWebDriver*(url: string = "http://localhost:4444"): WebDriver =
   WebDriver(url: url.parseUri, client: newHttpClient())
 
-proc createSession*(self: WebDriver): Session =
+proc createSession*(self: WebDriver, capabilities: JsonNode = %*{"browserName": "firefox"}): Session =
   ## Creates a new browsing session.
 
   # Check the readiness of the Web Driver.
@@ -73,7 +73,7 @@ proc createSession*(self: WebDriver): Session =
     raise newException(WebDriverException, "WebDriver is not ready")
 
   # Create our session.
-  let sessionReq = %*{"capabilities": {"browserName": "firefox"}}
+  let sessionReq = %*{"capabilities": capabilities}
   let sessionResp = self.client.postContent($(self.url / "session"),
                                             $sessionReq)
   let sessionObj = parseJson(sessionResp)
